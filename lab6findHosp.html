@@ -1,0 +1,145 @@
+<!DOCTYPE html> 
+    <html lang="en"> 
+    <head> 
+    <meta charset="UTF-8"> 
+    <title>Lab 6</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link rel = "stylesheet" type = "text/css" href= "677_L3.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="Control.OSMGeocoder.css">
+    <script src="Control.OSMGeocoder.js"></script>
+
+    <script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=jUs3RdWZc5xMJ7xEiDjB6nj5jC7ME4xO"></script>
+    <script src = "calcdist.js"></script>
+    <script>
+        var lonarr = [-75.852603, -75.21089, -76.638202, -76.596863, -75.593657, -75.583295, -75.597301, -76.972447, -76.067559, -76.065335, -76.590272, -76.605601, -76.992789, -76.875928,
+            -76.076493, -76.896806, -77.036356, -76.865294, -76.530762, -77.109788, -76.921088, -77.001495, -76.729539, -77.101332, -77.094279, -76.624175, -76.795689, -76.881477, -77.055007,
+            -77.19857, -76.064333, -76.064623, -76.721926, -76.65934, -76.886097, -76.550863, -76.445792,
+            -76.708485, -76.649285, -76.620464, -76.624584, -76.624431, -76.612975, -76.592376, -76.672232, -76.614664, -76.793256, -77.414719, -79.401121, -76.587723, -76.479471, -76.780809,
+            -76.610837, -76.624772, -76.614453, -76.619569, -76.652786, -76.663212, -76.95796, -76.090471,
+            -76.066185, -76.135441, -76.346535, -76.990989, -77.497228, -77.611677, -77.717801, -77.715805, -78.737753, -78.751493, -78.795278, -75.8319];
+
+        var latarr = [37.996777, 38.339516, 38.302021, 38.559641, 38.384215, 38.344139, 38.361902,
+            38.529286, 38.571405, 38.540358, 38.560618, 39.025312, 38.727705, 38.748226, 38.769916,
+            38.807215, 39.013901, 38.982069, 38.989553, 38.996648, 38.930858, 38.984178, 39.097762,
+            39.001165, 39.001826, 39.138707, 39.139386, 39.086155, 39.153834, 39.097848, 39.231206,
+            39.216831, 39.266716, 39.321945, 39.213752, 39.289483, 39.198587, 39.31201, 39.288229,
+            39.298685, 39.288243, 39.289451, 39.292731, 39.297192, 39.272502, 39.251838, 39.255905,
+            39.422926, 39.413099, 39.358172, 39.350483, 39.358085, 39.387661, 39.390038, 39.328499,
+            39.390423, 39.362788, 39.352739, 39.38743, 39.542769, 39.551385, 39.490179, 39.519764,
+            39.557495, 39.710857, 39.676871, 39.665369, 39.636981, 39.655339, 39.643027, 39.655549,
+            39.608263];
+
+        var namearr = ["McCready Memorial Hospital", "Atlantic General Hospital", "St. Mary's Hospital", "Calvert Memorial Hospital", "Deer's Head State Hospital", "Holly Mental Retardation Center", "Peninsula Regional Hospital", "Physicians Memorial Hospital",
+            "Dorchester General Hospital", "Eastern Shore Hospital Center", "Calvert Memorial Hospital",
+            "Crownsville State Hospital", "Fort Washington Community Hospital", "Southern Maryland Hospital Center", "The Memorial Hospital at Easton", "Malcolm Grow USAF Medical Center",
+            "Holy Cross Hospital", "Doctors Community Hospital", "Anne Arundel Medical Plaza",
+            "Suburban Hospital", "Prince Georges Hospital", "Washington Adventist Hospital", "Kimbrough US Army Hospital", "National Institute of Health", "National Naval Medical Center", "North Arundel Hospital", "Clifton T. Perkins Hospital Center", "Laurel Regional Hospital",
+            "Montgomery General Hospital", "Shady Grove Adventist Hospital", "Upper Shore Community Mental Health Center", "Kent and Queen Annes County General Hospital", "Spring Grove State Hospital", "Liberty Medical Center", "Howard County General Hospital", "Johns Hopkins Bayview Medical Center", "Fort Howard Veterans Hospital", "Kernan Hospital and Rehab Center", "Bon Secours Hospital", "Maryland General Hospital", "University of Maryland Medical Center", "Baltimore VA Medical Center", "Mercy Medical Center", "Johns Hopkins hospital", "St. Agnes Hospital", "Harbor Hospital Center", "Taylor Manor Hospital", "Frederick Memorial Hospital", "Garrett County Memorial Hospital", "The Good Samaritan Hospital",
+            "Franklin Square Hospital", "Northwest Hospital Center", "Saint Joseph's Hospital", "Greater Baltimore Medical Center", "Union Memorial Hospital", "Sheppard and Enoch Pratt Hospital",
+            "Mount Washington Pediatric Hospital", "Hebrew Medical Center Sinai Hospital", "Springfield State Hospital Center", "Harford Memorial Hospital", "Veterans Administration Medical Center", "Kirk Army Health Clinic", "Upper Chesapeake Medical Center", "Carroll County General Hospital", "Fort Ritchie Hospital", "Brook Lane Psychiatric Center", "Western Maryland Hospital Center", "Washington County Hospital", "Allegany Health Center",
+            "Memorial Hospital of Cumberland", "Sacred Heart Hospital", "Union Hospital"];
+
+        var map; 
+
+        function init(){
+            var mapLayer = new MQ.mapLayer();
+            var satellite = new MQ.satelliteLayer();
+
+            var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 13,
+                attribution: 'Â© OpenStreetMap'
+            });
+
+            map = L.map('map',{
+            center: [39.20838805888549, -76.86630478287745],
+            zoom: 10,
+            layers: [mapLayer, osm, satellite]
+            });
+        
+           
+
+            var Icon = L.icon({
+            iconUrl: 'redcross.png',
+            iconSize: [25, 25], 
+            });
+            
+            function addMarker(lati, loni, name) {
+            L.marker([lati, loni], {icon:Icon}).bindPopup(name).addTo(map);
+            }; 
+
+            var len = latarr.length;
+            for (var i = 0; i < len; i++) {
+            addMarker(latarr[i], lonarr[i], namearr[i]);
+            };
+
+            var options = {
+                collapsed: true, 
+                position: 'topright', 
+                text: 'Search', 
+                placeholder: 'Congo Falls Adventure Golf', 
+                email: null, 
+            }; 
+
+            var osmGeocoder = new L.Control.OSMGeocoder(options);
+            map.addControl(osmGeocoder);
+        
+            var basemaps ={
+                'MapQuest':mapLayer,
+                "OpenStreetMap": osm,
+                'Satellite': satellite,
+            };
+
+            var layerControl = L.control.layers(basemaps,).addTo(map);
+           
+        }
+        window.onload = init;
+
+        function findnear() {
+            var Icon_near = L.icon({
+            iconUrl: 'caution_maps.png',
+            iconSize: [32, 32]
+            });
+
+            var len = latarr.length;
+            var count = 0;
+
+            for (var i = 0; i < len; i++) { 
+            var radius = document.getElementById("size").value;
+            var latinput = document.getElementById("lat").value;
+            var loninput = document.getElementById("lng").value;
+
+            var distance = calcdist(latarr[i], latinput, lonarr[i], loninput);
+            if (distance < radius) {
+                addMarker(latarr[i], lonarr[i], namearr[i]);
+                count++;
+            }
+            };
+           
+            document.getElementById("distance").innerHTML = "Found " + count;
+
+            function addMarker(lati, loni, name) {
+            L.marker([lati, loni], {icon:Icon_near}).bindPopup(name).addTo(map);
+            };
+        }
+    </script>
+    </head>
+
+    <body>
+        <form>
+            <label for="lat">Latitude:</label>
+            <input type="number" name="lat" id="lat" value="38.985978" min="-90" max="90" step="0.000001"/>
+            <label for="lng">Longitude:</label>
+            <input type="number" name="lng" id="lng" value="-76.942564" min="-180" max="180" step="0.000001"/>
+            <label for="size">Range (km)</label>
+            <input type="number" name="size" id="size" value="7" min="0" max="999" step="1"/>
+            <input type="button" value="Find" onclick="javascript:findnear()"/>
+            <span id="distance"> </span>
+        </form>
+        <div id="map"></div>
+
+    </body>
+    </html>
