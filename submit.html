@@ -1,0 +1,82 @@
+
+<!DOCTYPE html> 
+    <html lang="en"> 
+    <head> 
+    <meta charset="UTF-8"> 
+    <title>Submit YOUR Haunted Location</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"> </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link rel = "stylesheet" type = "text/css" href= "POI.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="Control.OSMGeocoder.css">
+    <script src="Control.OSMGeocoder.js"></script>
+
+    <script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=jUs3RdWZc5xMJ7xEiDjB6nj5jC7ME4xO"></script>
+
+    <script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=jUs3RdWZc5xMJ7xEiDjB6nj5jC7ME4xO"></script>
+
+    <script src = "calcdist.js"></script>
+    </head>
+
+    <body>
+        <nav class = "grey darken-3">
+            <div class="nav-wrapper">
+              <a href="#!" class="brand-logo white-text ">Submit a Location</a>
+              <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">Menu</i></a>
+              <ul class="right hide-on-med-and-down white-text">
+                <li><a href="677_Final.html">Haunted Locations</a></li>
+                <li><a href="POIS.html">Find POIs</a></li>
+                <li><a href="SThanks.html">A Special Thanks</a></li>
+              </ul>
+            </div>
+          </nav>
+        
+  <div class="row">
+    <div class="col s12 m6">
+      <div class="card deep-orange darken-4">
+        <div class="card-content white-text">
+          <span class="card-title">Do YOU Know of a Haunted Location?</span>
+          <p>Have you felt strange cold spots? Heard creaks and groans that you can't explain? Let us know about it! Please submit the location below for review.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Code edited from code provided on materialize's website -->
+
+<div class="row">
+    <form class="col s12">
+      <div class="row">
+        <div class="input-field col s6">
+          <input id="lat" type="number" class="validate"  min="-90" max="90" step="0.000001">
+          <label for="lat">Latitude</label>
+        </div>
+        <div class="input-field col s6">
+          <input id="long" type="number" class="validate" min="-180" max="180" step="0.000001" >
+          <label for="long">Longitude</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <input id="locname" type="text" class="validate">
+          <label for="locname">Name of Location</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <input id="locdesc" type="text" class="validate">
+          <label for="locdesc">Location Description</label>
+        </div>
+      </div>
+    </form>
+  </div>
+  
+  <button class="btn waves-effect waves-light deep-orange darken-4" type="submit" name="action"> Submit </button>
+
+</body>
+</html> 

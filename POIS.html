@@ -1,0 +1,144 @@
+<!DOCTYPE html> 
+    <html lang="en"> 
+    <head> 
+    <meta charset="UTF-8"> 
+    <title>Find Haunted Locations</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"> </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link rel = "stylesheet" type = "text/css" href= "677_L3.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="Control.OSMGeocoder.css">
+    <script src="Control.OSMGeocoder.js"></script>
+
+    <script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=jUs3RdWZc5xMJ7xEiDjB6nj5jC7ME4xO"></script>
+
+    <script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=jUs3RdWZc5xMJ7xEiDjB6nj5jC7ME4xO"></script>
+    <script src = "calcdist.js"></script>
+
+    <script>
+        function init(){
+            var mapLayer = new MQ.mapLayer();
+            var satellite = new MQ.satelliteLayer();
+
+            var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: 'Â© OpenStreetMap'
+            });
+
+            var map = L.map('map',{
+            center: [39.890828010830305, -74.52554517146109],
+            zoom: 8.4,
+            layers: [mapLayer, osm, satellite]
+            });
+            var Icon = L.icon({
+            iconUrl: 'bat.png',
+            iconSize: [35, 35], 
+            });
+            
+            var lonarr = [-74.498687,-74.911422,-73.9332,-74.41416,-74.042968,-74.121599,-74.132098,-74.238747,-74.388432,-74.583213,-74.410746,-74.408863,-74.728981,-74.371512,-74.524926,-74.717523,-74.955618,-74.960355,
+            -74.963359,-74.91684,-74.918639,-74.918913,-74.2437581,-74.980989,-74.912785,-74.72095,-74.517444,-74.321219,-74.942101,-74.396769,-75.16757,-74.129887,-74.734056,-74.772155,-74.494046,-75.060718,-75.075297,
+            -74.030314,-74.31593,-74.943526,-74.476452,-74.789405,-75.189706,-75.083169,-74.183439,-74.57595,-74.56913,-73.978893,-74.069697,-75.160056];
+
+            var latarr = [39.425192,40.904986,40.93381,39.366309,40.072016,40.671801,40.659841,39.555798,40.683526,40.630167,40.905126,40.913111,40.507119,39.401711,39.921471,40.966458,38.931576,38.933002,38.961067,38.930989,
+            39.93549,38.936403,40.8518893,40.003512,40.636166,40.07293,40.307772,40.659173,40.052399,40.500422,39.525447,40.157785,40.136786,40.117692,40.522524,39.837555,39.900647,40.738587,40.028773,40.362698,40.79414,
+            39.99686,39.868584,39.59501,40.812119,39.274384,39.283363,41.023115,40.083001,39.832599];
+
+            var namearr = ["The Jonathan Pitney House","Shades of Death Road","The Devils Tower","Asbsecon Lighthouse","The Grenville Hotel","Bayonne Public High School","Robbins Reef Yacht Club","City of Beach Haven","Feltville Ghost Town",
+            "The Devil's Tree","The Darress Theatre","The Glowing Headstone","Old Murphy Crocodile Inn","The 13th Street Woman In White","Mount Misery Nature Retreat","The Tamaracks Country Villa","Battery 223","Cape May Lighthouse",
+            "Higbee Beach","The Hotel Macomber","The Southern Mansion","The Washington Inn","Overbrook Asylum","Lakeview Memorial Park","Red Mill Museum Village","The Olde Columbus Inne","The Cranbury Inn","The Hanging Tree","Nellie's Pond",
+            "Piscatawaytown Burial Ground","Ye Olde Centerton Inn","Allaire Village","White Hill Mansion","Roebling's Sons Manufacturing Copmany","The Van Wickle House","The Gabreil Daveis Tavern","The Ritz Theatre","The Brass Rail",
+            "The Hindenburg Disaster Site","The Hawke Inn","Jockey Hollow Bar and Kitchen","Mount Holly Prison Museum","The James and Ann Whitall House","The Lake House Restaurant Woman in Black","The Old Canal Inn Death Chair","The Flanders Hotel",
+            "Ocean City Mansion","The Ghost Bugler of Old Tappan Golf Course","The Shore House Tavern","The Sketch Club Players of Woodbury"];
+
+            function addMarker(lati, loni, name) {
+            L.marker([lati, loni], {icon:Icon}).bindPopup(name).addTo(map);
+            } 
+
+            var len = latarr.length;
+            for (var i = 0; i < len; i++) {
+            addMarker(latarr[i], lonarr[i], namearr[i]);
+            }
+
+            var options = {
+                collapsed: true, 
+                position: 'topright', 
+                text: 'Search', 
+                placeholder: 'Restaurant', 
+                email: null, 
+            }; 
+
+            var osmGeocoder = new L.Control.OSMGeocoder(options);
+            map.addControl(osmGeocoder);
+        
+            var basemaps ={
+                'MapQuest':mapLayer,
+                "OpenStreetMap": osm,
+                'Satellite': satellite,
+            };
+
+            var layerControl = L.control.layers(basemaps,).addTo(map);
+        }
+        window.onload = init;
+
+        function findnear() {
+            var Icon_near = L.icon({
+            iconUrl: 'caution_maps.png',
+            iconSize: [32, 32]
+            });
+
+            var len = latarr.length;
+            var count = 0;
+
+            for (var i = 0; i < len; i++) { 
+            var radius = document.getElementById("size").value;
+            var latinput = document.getElementById("lat").value;
+            var loninput = document.getElementById("lng").value;
+
+            var distance = calcdist(latarr[i], latinput, lonarr[i], loninput);
+            if (distance < radius) {
+                addMarker(latarr[i], lonarr[i], namearr[i]);
+                count++;
+            }
+            };
+           
+            document.getElementById("distance").innerHTML = "Found " + count;
+
+            function addMarker(lati, loni, name) {
+            L.marker([lati, loni], {icon:Icon_near}).bindPopup(name).addTo(map);
+            };
+        }
+    </script>
+    </head>
+    
+    <body>
+        <nav class = "grey darken-3">
+            <div class="nav-wrapper">
+              <a href="#!" class="brand-logo white-text"> Find Points of Interest</a>
+              <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+              <ul class="right hide-on-med-and-down white-text">
+                <li><a href="677_Final.html">Haunted Locations</a></li>
+                <li><a href="submit.html">Submit a Location</a></li>
+                <li><a href="SThanks.html">A Special Thanks</a></li>
+              </ul>
+            </div>
+          </nav>
+
+          <form>
+            <label for="lat">Latitude:</label>
+            <input type="number" name="lat" id="lat" value="38.985978" min="-90" max="90" step="0.000001"/>
+            <label for="lng">Longitude:</label>
+            <input type="number" name="lng" id="lng" value="-76.942564" min="-180" max="180" step="0.000001"/>
+            <label for="size">Range (km)</label>
+            <input type="number" name="size" id="size" value="7" min="0" max="999" step="1"/>
+            <input type="button" value="Find" onclick="javascript:findnear()"/>
+            <span id="distance"> </span>
+        </form>
+
+        <div id="map"></div>
+
+    </body>
